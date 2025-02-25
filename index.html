@@ -2,75 +2,84 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countdown Timer</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 50px;
-        }
-        #timer {
-            font-size: 2em;
-            margin: 20px;
-        }
-    </style>
+    <title>test3</title>
 </head>
 <body>
-    <h1>Countdown Timer</h1>
-    <label for="timeInput">Set time (seconds):</label>
-    <input type="number" id="timeInput" value="60">
-    <button onclick="startCountdown()">Start</button>
-    <button onclick="pauseCountdown()">Pause</button>
-    <div id="timer">00:00:00</div>
-    <br>
-    <label for="audioFile">Upload alarm sound:</label>
-    <input type="file" id="audioFile" accept="audio/*">
-    <audio id="alarmSound" controls style="display:none;"></audio>
+<input type="number" id="timeInput1" placeholder="Nhập giây đồng hồ 1">
+<button onclick="startCountdown(1)">Bắt đầu 1</button>
+<button onclick="pauseCountdown(1)">Tạm dừng 1</button>
+<h1 id="timer1">00:00:00</h1>
 
-    <script>
-        let countdown;
-        let seconds;
-        let isPaused = false;
+<input type="number" id="timeInput2" placeholder="Nhập giây đồng hồ 2">
+<button onclick="startCountdown(2)">Bắt đầu 2</button>
+<button onclick="pauseCountdown(2)">Tạm dừng 2</button>
+<h1 id="timer2">00:00:00</h1>
 
-        function startCountdown() {
-            if (!isPaused) {
-                seconds = document.getElementById("timeInput").value;
-            }
-            isPaused = false;
-            clearInterval(countdown);
-            countdown = setInterval(() => {
-                if (!isPaused) {
-                    let hours = Math.floor(seconds / 3600);
-                    let minutes = Math.floor((seconds % 3600) / 60);
-                    let secs = seconds % 60;
-                    document.getElementById("timer").innerText =
-                        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-                    
-                    if (seconds <= 0) {
-                        clearInterval(countdown);
-                        document.getElementById("timer").innerText = "Time's up!";
-                        playAlarm();
-                    }
-                    seconds--;
+<audio id="alarm1" src="Violin sound.m4a"></audio>
+<audio id="alarm2" src="30s.m4a"></audio>
+<audio id="alarm3" src="Keep going sound.m4a"></audio> <!-- Âm thanh thứ 3 -->
+
+<script>
+    let countdowns = { 1: null, 2: null };
+    let seconds = { 1: 0, 2: 0 };
+    let isPaused = { 1: false, 2: false };
+
+    function startCountdown(timerId) {
+        if (!isPaused[timerId]) {
+            seconds[timerId] = document.getElementById(`timeInput${timerId}`).value;
+        }
+        isPaused[timerId] = false;
+        clearInterval(countdowns[timerId]);
+
+        let audio = document.getElementById(`alarm${timerId}`);
+        let audio3 = document.getElementById("alarm3"); // Âm thanh thứ 3
+
+        audio.play().catch(() => console.log("Trình duyệt chặn âm thanh!"));
+        audio.pause();
+        audio3.pause();
+
+        countdowns[timerId] = setInterval(() => {
+            if (!isPaused[timerId]) {
+                let hours = Math.floor(seconds[timerId] / 3600);
+                let minutes = Math.floor((seconds[timerId] % 3600) / 60);
+                let secs = seconds[timerId] % 60;
+
+                document.getElementById(`timer${timerId}`).innerText =
+                    `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+                // Âm thanh khi còn 30 giây
+                if (seconds[timerId] === 30) {
+                    audio.play();
                 }
-            }, 1000);
-        }
 
-        function pauseCountdown() {
-            isPaused = true;
-        }
+                // Nếu là đồng hồ số 2, phát âm thanh 3 khi còn 10 giây
+                if (timerId === 2 && seconds[2] === 10) {
+                    audio3.play();
+                }
 
-        function playAlarm() {
-            const audioFile = document.getElementById("audioFile").files[0];
-            if (audioFile) {
-                const objectURL = URL.createObjectURL(audioFile);
-                const alarmSound = document.getElementById("alarmSound");
-                alarmSound.src = objectURL;
-                alarmSound.style.display = "block";
-                alarmSound.play();
+                if (seconds[timerId] <= 0) {
+                    clearInterval(countdowns[timerId]);
+                    document.getElementById(`timer${timerId}`).innerText = "Time's up!";
+                }
+
+                seconds[timerId]--;
             }
-        }
-    </script>
+        }, 1000);
+    }
+
+    function pauseCountdown(timerId) {
+        isPaused[timerId] = true;
+
+        let audio = document.getElementById(`alarm${timerId}`);
+        let audio3 = document.getElementById("alarm3");
+
+        // Dừng tất cả âm thanh khi tạm dừng
+        audio.pause();
+        audio.currentTime = 0;
+        audio3.pause();
+        audio3.currentTime = 0;
+    }
+</script>
+
 </body>
 </html>
