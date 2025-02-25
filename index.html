@@ -19,6 +19,7 @@
 <audio id="alarm1" src="Violin sound.m4a"></audio>
 <audio id="alarm2" src="30s.m4a"></audio>
 <audio id="alarm3" src="Keep going sound.m4a"></audio> <!-- Âm thanh thứ 3 -->
+<audio id="alarm4" src="the bell.mp3"></audio>
 
 <script>
     let countdowns = { 1: null, 2: null };
@@ -34,10 +35,12 @@
 
         let audio = document.getElementById(`alarm${timerId}`);
         let audio3 = document.getElementById("alarm3"); // Âm thanh thứ 3
+         let audio4 = document.getElementById("alarm4");
 
         audio.play().catch(() => console.log("Trình duyệt chặn âm thanh!"));
         audio.pause();
         audio3.pause();
+        audio4.pause();
 
         countdowns[timerId] = setInterval(() => {
             if (!isPaused[timerId]) {
@@ -61,6 +64,7 @@
                 if (seconds[timerId] <= 0) {
                     clearInterval(countdowns[timerId]);
                     document.getElementById(`timer${timerId}`).innerText = "Time's up!";
+                     audio4.play();
                     audio.pause();
                     audio.currentTime = 0;
                     audio3.pause();
