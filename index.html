@@ -61,6 +61,10 @@
                 if (seconds[timerId] <= 0) {
                     clearInterval(countdowns[timerId]);
                     document.getElementById(`timer${timerId}`).innerText = "Time's up!";
+                    audio.pause();
+                    audio.currentTime = 0;
+                    audio3.pause();
+                    audio3.currentTime = 0;
                 }
 
                 seconds[timerId]--;
